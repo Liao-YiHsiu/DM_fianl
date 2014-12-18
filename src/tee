@@ -1,0 +1,1 @@
+Usage: ./nn_train graph.txt training.txt iteration model.txt
