@@ -6,6 +6,9 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 using namespace std;
 // use coo to store data
@@ -140,6 +143,17 @@ void writeAns(const char* fileName, vector< vector<int> > &ans){
          fout << ans[i][j] << " ";
       fout << endl;
    }
+}
+
+void createDir(const char* dirName){
+   struct stat buf;
+   if( stat(dirName, &buf) != 0 ){
+      if( S_ISDIR(buf.st_mode) )
+         return;
+      unlink(dirName);
+   }
+   mkdir(dirName, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+   
 }
 
 #endif
