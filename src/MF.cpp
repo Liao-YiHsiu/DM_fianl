@@ -46,7 +46,7 @@ int main(int argc, const char* argv[]){
    system(cmd);
 
    // train
-   sprintf(cmd, "%s train --tr-rmse --obj -k 20 -t 1000 -s 8 -p 0.05 -q 0.05 -g 0.003 -ub -1 -ib -1 --no-use-avg --rand-shuffle -v %s.bin %s.bin %s/model", mf_prog, file1, file1, tmp_dir);
+   sprintf(cmd, "%s train --tr-rmse --obj -k 50 -t 1000 -s 8 -p 0.05 -q 0.05 -g 0.003 -ub -1 -ib -1 --no-use-avg --rand-shuffle -v %s.bin %s.bin %s/model", mf_prog, file1, file1, tmp_dir);
    system(cmd);
 
    // predict
