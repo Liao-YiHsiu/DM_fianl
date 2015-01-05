@@ -1,10 +1,12 @@
-function answer = run(graph_file, train_file, test_file, out_file) 
-   N = 10;
-   cluster = parcluster('local');
-   cluster.NumWorkers=8;
-   saveProfile(cluster);
-   matlabpool open 8;
 
+   graph_file = '../graph.txt';
+   train_file = '../training.txt';
+   test_file = '../test_data/test_data_q1.txt';
+   out_file = 'out.txt';
+   N = 30;
+
+   fid = fopen(out_file, 'w');
+   fprintf(fid, 'testing\n');
 
    fprintf(2, 'reading Graph\n');
    graph = readGraph(graph_file);
@@ -13,19 +15,17 @@ function answer = run(graph_file, train_file, test_file, out_file)
    fprintf(2, 'reading Testing\n');
    test = readTest(test_file);
 
-   fid = fopen(out_file, 'w');
 
    answer = zeros(size(test,2), 100);
 
    
    % fill matrix for svd
-   matrix = -.5*ones(size(train, 2)+1, size(graph, 2));
+   matrix = ones(size(train, 2)+1, size(graph, 2))*-.5;
    for j = 1:size(train, 2) 
      matrix(j, train{j}.node) = train{j}.degree-0.5; 
    end
-
-   for j = 1:size(test, 2)
-      matrix(end, :) = -.5; 
+   j = 1;
+      matrix(end, :) = 0; 
       matrix(end, test{j}) = 0.5;
 
       fprintf(2, 'start svd...\n');
@@ -34,7 +34,6 @@ function answer = run(graph_file, train_file, test_file, out_file)
       S2(N+1:end, N+1:end) = 0;
       M = U*S2*V';
 
-      M(end, test{j}) = -100;
       
       tmp = zeros(size(graph,2), 2);
       tmp(:, 1) = M(end, :)';
@@ -47,8 +46,6 @@ function answer = run(graph_file, train_file, test_file, out_file)
       fprintf(fid, '%d ', answer(j, :));
       fprintf(fid, '\n');
 
-   end
 
-   matlabpool close
-
-end
+   
+   
