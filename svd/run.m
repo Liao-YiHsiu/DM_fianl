@@ -1,4 +1,7 @@
-function answer = run(graph_file, train_file, test_file, out_file, N = 50) 
+function answer = run(graph_file, train_file, test_file, out_file, N) 
+   if nargin < 5
+      N = 50;
+   end
 %   cluster = parcluster('local');
 %   cluster.NumWorkers=8;
 %   saveProfile(cluster);
