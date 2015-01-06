@@ -11,5 +11,6 @@ for i in ${arr[@]}; do
    python ../eval.py out3.txt ../test_data/test_data_a3.txt | tee -a result.txt
    
    git add out* result.txt
-   git commit -m "N = $i"$'\n'"`cat result`"
+   git commit -m "N = $i
+   `cat result`"
 done
