@@ -1,5 +1,4 @@
-function answer = run(graph_file, train_file, test_file, out_file) 
-   N = 2;
+function answer = run(graph_file, train_file, test_file, out_file, N = 50) 
 %   cluster = parcluster('local');
 %   cluster.NumWorkers=8;
 %   saveProfile(cluster);
