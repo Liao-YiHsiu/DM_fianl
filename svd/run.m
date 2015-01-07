@@ -1,6 +1,6 @@
 function answer = run(graph_file, train_file, test_file, out_file, N) 
    if nargin < 5
-      N = 50;
+      N = [1 2 5 10 15 20 25 30 50 100 150 200];
    end
 %   cluster = parcluster('local');
 %   cluster.NumWorkers=8;
@@ -15,7 +15,6 @@ function answer = run(graph_file, train_file, test_file, out_file, N)
    fprintf(2, 'reading Testing\n');
    test = readTest(test_file);
 
-   fid = fopen(out_file, 'w');
 
    answer = zeros(size(test,2), 100);
 
@@ -33,23 +32,28 @@ function answer = run(graph_file, train_file, test_file, out_file, N)
 
    fprintf(2, 'start svd...\n');
    [U, S, V] = svd(matrix);
-   S2 = S;
-   S2(N+1:end, N+1:end) = 0;
-   M = U*S2*V';
 
-   for j = 1:size(test, 2)
-      M(size(train, 2)+j, test{j}) = -100;
+   for n = N
+      fid = fopen(strcat(out_file, '_', int2str(n)), 'w');
 
-      tmp = zeros(size(graph,2), 2);
-      tmp(:, 1) = M(size(train,2)+j, :)';
-      tmp(:, 2) = 1:size(graph,2);
+      S2 = S;
+      S2(n+1:end, n+1:end) = 0;
+      M = U*S2*V';
 
-      tmp = sortrows(tmp, -1);
+      for j = 1:size(test, 2)
+         M(size(train, 2)+j, test{j}) = -100;
 
-      answer(j, :) = tmp(1:100, 2)';
+         tmp = zeros(size(graph,2), 2);
+         tmp(:, 1) = M(size(train,2)+j, :)';
+         tmp(:, 2) = 1:size(graph,2);
 
-      fprintf(fid, '%d ', answer(j, :));
-      fprintf(fid, '\n');
+         tmp = sortrows(tmp, -1);
+
+         answer(j, :) = tmp(1:100, 2)';
+
+         fprintf(fid, '%d ', answer(j, :));
+         fprintf(fid, '\n');
+      end
    end
 
 %   matlabpool close

@@ -1,0 +1,156 @@
+out1.txt
+precision = 95 / 1000 , 0.095000
+recall    = 95 / 7367 , 0.012895
+f-measure = 0.022708
+out1.txt_1
+precision = 95 / 1000 , 0.095000
+recall    = 95 / 7367 , 0.012895
+f-measure = 0.022708
+out1.txt_10
+precision = 71 / 1000 , 0.071000
+recall    = 71 / 7367 , 0.009638
+f-measure = 0.016971
+out1.txt_100
+precision = 84 / 1000 , 0.084000
+recall    = 84 / 7367 , 0.011402
+f-measure = 0.020079
+out1.txt_15
+precision = 85 / 1000 , 0.085000
+recall    = 85 / 7367 , 0.011538
+f-measure = 0.020318
+out1.txt_150
+precision = 91 / 1000 , 0.091000
+recall    = 91 / 7367 , 0.012352
+f-measure = 0.021752
+out1.txt_2
+precision = 72 / 1000 , 0.072000
+recall    = 72 / 7367 , 0.009773
+f-measure = 0.017210
+out1.txt_20
+precision = 82 / 1000 , 0.082000
+recall    = 82 / 7367 , 0.011131
+f-measure = 0.019601
+out1.txt_200
+precision = 112 / 1000 , 0.112000
+recall    = 112 / 7367 , 0.015203
+f-measure = 0.026772
+out1.txt_25
+precision = 80 / 1000 , 0.080000
+recall    = 80 / 7367 , 0.010859
+f-measure = 0.019123
+out1.txt_30
+precision = 106 / 1000 , 0.106000
+recall    = 106 / 7367 , 0.014388
+f-measure = 0.025338
+out1.txt_5
+precision = 54 / 1000 , 0.054000
+recall    = 54 / 7367 , 0.007330
+f-measure = 0.012908
+out1.txt_50
+precision = 103 / 1000 , 0.103000
+recall    = 103 / 7367 , 0.013981
+f-measure = 0.024621
+out2.txt
+precision = 133 / 1000 , 0.133000
+recall    = 133 / 9109 , 0.014601
+f-measure = 0.026313
+out2.txt_1
+precision = 133 / 1000 , 0.133000
+recall    = 133 / 9109 , 0.014601
+f-measure = 0.026313
+out2.txt_10
+precision = 70 / 1000 , 0.070000
+recall    = 70 / 9109 , 0.007685
+f-measure = 0.013849
+out2.txt_100
+precision = 102 / 1000 , 0.102000
+recall    = 102 / 9109 , 0.011198
+f-measure = 0.020180
+out2.txt_15
+precision = 68 / 1000 , 0.068000
+recall    = 68 / 9109 , 0.007465
+f-measure = 0.013453
+out2.txt_150
+precision = 97 / 1000 , 0.097000
+recall    = 97 / 9109 , 0.010649
+f-measure = 0.019191
+out2.txt_2
+precision = 113 / 1000 , 0.113000
+recall    = 113 / 9109 , 0.012405
+f-measure = 0.022356
+out2.txt_20
+precision = 83 / 1000 , 0.083000
+recall    = 83 / 9109 , 0.009112
+f-measure = 0.016421
+out2.txt_200
+precision = 93 / 1000 , 0.093000
+recall    = 93 / 9109 , 0.010210
+f-measure = 0.018399
+out2.txt_25
+precision = 83 / 1000 , 0.083000
+recall    = 83 / 9109 , 0.009112
+f-measure = 0.016421
+out2.txt_30
+precision = 85 / 1000 , 0.085000
+recall    = 85 / 9109 , 0.009331
+f-measure = 0.016817
+out2.txt_5
+precision = 74 / 1000 , 0.074000
+recall    = 74 / 9109 , 0.008124
+f-measure = 0.014640
+out2.txt_50
+precision = 92 / 1000 , 0.092000
+recall    = 92 / 9109 , 0.010100
+f-measure = 0.018202
+out3.txt
+precision = 139 / 1000 , 0.139000
+recall    = 139 / 5847 , 0.023773
+f-measure = 0.040602
+out3.txt_1
+precision = 139 / 1000 , 0.139000
+recall    = 139 / 5847 , 0.023773
+f-measure = 0.040602
+out3.txt_10
+precision = 105 / 1000 , 0.105000
+recall    = 105 / 5847 , 0.017958
+f-measure = 0.030670
+out3.txt_100
+precision = 94 / 1000 , 0.094000
+recall    = 94 / 5847 , 0.016077
+f-measure = 0.027457
+out3.txt_15
+precision = 66 / 1000 , 0.066000
+recall    = 66 / 5847 , 0.011288
+f-measure = 0.019279
+out3.txt_150
+precision = 91 / 1000 , 0.091000
+recall    = 91 / 5847 , 0.015564
+f-measure = 0.026581
+out3.txt_2
+precision = 119 / 1000 , 0.119000
+recall    = 119 / 5847 , 0.020352
+f-measure = 0.034760
+out3.txt_20
+precision = 70 / 1000 , 0.070000
+recall    = 70 / 5847 , 0.011972
+f-measure = 0.020447
+out3.txt_200
+precision = 103 / 1000 , 0.103000
+recall    = 103 / 5847 , 0.017616
+f-measure = 0.030086
+out3.txt_25
+precision = 68 / 1000 , 0.068000
+recall    = 68 / 5847 , 0.011630
+f-measure = 0.019863
+out3.txt_30
+precision = 69 / 1000 , 0.069000
+recall    = 69 / 5847 , 0.011801
+f-measure = 0.020155
+out3.txt_5
+precision = 100 / 1000 , 0.100000
+recall    = 100 / 5847 , 0.017103
+f-measure = 0.029210
+out3.txt_50
+precision = 69 / 1000 , 0.069000
+recall    = 69 / 5847 , 0.011801
+f-measure = 0.020155
