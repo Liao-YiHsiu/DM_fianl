@@ -20,7 +20,7 @@ int main(int argc, char** argv){
    if(argc != 4)
       Usage(argv[0]);
 
-   vector<Edge> edges;
+   vector< vector<Edge> > edges;
    vector< vector<int> > initAdts;
    vector< vector<int> > ans;
 

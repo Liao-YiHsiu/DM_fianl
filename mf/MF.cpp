@@ -21,7 +21,7 @@ int main(int argc, const char* argv[]){
    if( argc < 6 || argc > 8 )
       Usage(argv[0]);
 
-   vector<Edge> edges;
+   vector< vector<Edge> > edges;
    vector< vector<Idea> > ideas;
    vector< vector<int> > initAdpt;
 
@@ -29,7 +29,8 @@ int main(int argc, const char* argv[]){
    const char* mf_prog = argv[1];
    const char* tmp_dir = argc == 7? argv[6]:"./tmp";
    createDir(tmp_dir);
-   int N = readGraph( argv[2], edges);
+   readGraph( argv[2], edges);
+   int N = edges.size()-1;
    readTrain(argv[3], ideas);
    readTest(argv[4], initAdpt);
 
