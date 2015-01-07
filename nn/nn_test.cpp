@@ -14,7 +14,7 @@ void Usage(char* progName){
    exit(-1);
 }
 
-void test(vector<Edge>& edges, vector< vector<int> > &initAdts, vector< vector<int> > &ans, int max, int N);
+void test(vector< vector<Edge> >& edges, vector< vector<int> > &initAdts, vector< vector<int> > &ans, int max);
 
 int main(int argc, char** argv){
    if(argc != 4)
@@ -28,7 +28,7 @@ int main(int argc, char** argv){
 
    fprintf(stderr, "Start reading models.\n");
    // read trained models
-   N = readModel(argv[1], edges);
+   readModel(argv[1], edges);
 
    fprintf(stderr, "Start reading initial Adopters.\n");
    // read initial adopters
@@ -36,34 +36,40 @@ int main(int argc, char** argv){
 
    fprintf(stderr, "Start testing.\n");
    // test
-   test(edges, initAdts, ans, 100, N);
+   test(edges, initAdts, ans, 100);
 
    fprintf(stderr, "Start writing answers.\n");
    writeAns(argv[3], ans);
+
    return 0;
 }
 
-void test(vector<Edge>& edges, vector< vector<int> > &initAdts, vector< vector<int> > &ans, int max, int N){
-   vector<float> v0;
-   vector<float> v;
+void test(vector< vector<Edge> >& edges, vector< vector<int> > &initAdts, vector< vector<int> > &ans, int max){
+   vector<Real> v0;
+   vector<Real> v;
    vector<int> index;
-   vector< pair<int, float> > arr;
+   vector< pair<int, Real> > arr;
    vector<int> top;
+
+   Real neutral = 0.5;
    
    for(int i = 0, iSize = initAdts.size(); i < iSize; ++i){
-      v0.clear(); v0.resize(N+1, 0.5); v0[0] = 1;
+      v0.clear(); v0.resize(edges.size(), neutral); v0[0] = 1; // for bias term
 
-      // inference 1 times.
-      for (int j = 0; j < 1; ++j){
+      // inference 1 time.
+      for (int j = 0; j < 5; ++j){
+
          for(int k = 0, kSize = initAdts[i].size(); k < kSize; ++k){
             v0[initAdts[i][k]] = 1;
          }
 
-         v.clear(); v.resize(N+1, 0); 
+         v.clear(); v.resize(edges.size(), 0); 
          // v = M*v0;
          for(int k = 0, kSize = edges.size(); k < kSize; ++k)
-            v[edges[k].row] += edges[k].weight * v0[edges[k].col];
-         for(int k = 0; k < N+1; ++k)
+            for(int l = 0, lSize = edges[k].size(); l < lSize; ++l)
+               v[k] += edges[k][l].weight * v0[edges[k][l].from];
+
+         for(int k = 0; k < edges.size(); ++k)
             v[k] = sigmoid(v[k]);
 
          v0 = v;
@@ -71,8 +77,8 @@ void test(vector<Edge>& edges, vector< vector<int> > &initAdts, vector< vector<i
       }
 
       //fprintf(stderr, "\n");
-      index.clear(); index.resize(N+1, 0);
-      for(int j = 0; j <= N; ++j)
+      index.clear(); index.resize(edges.size(), 0);
+      for(int j = 0; j < edges.size(); ++j)
          index[j] = j;
 
       // eliminate initial adopters and 0
@@ -82,10 +88,10 @@ void test(vector<Edge>& edges, vector< vector<int> > &initAdts, vector< vector<i
 
       // sort index by v
       arr.clear();
-      pair<int, float> pTmp;
-      for(int j = 0; j <= N; j++)
+      pair<int, Real> pTmp;
+      for(int j = 0; j < edges.size(); j++)
          if(index[j] != -1)
-            arr.push_back(pair<int, float>(index[j], v0[j]));
+            arr.push_back(pair<int, Real>(index[j], v0[j]));
       
       sort(arr.begin(), arr.end(), mycomp);
 

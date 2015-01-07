@@ -2,6 +2,7 @@
 #define _NN_H_
 
 #include <cmath>
+#include <stdlib.h>
 #include <iostream>
 #include <vector>
 #include <fstream>
@@ -12,29 +13,37 @@
 
 using namespace std;
 // use coo to store data
+
+typedef float Real;
+
 typedef struct{
-   int row;
-   int col;
-   float weight;
+   int from;
+   Real weight;
 } Edge;
 
 // degree normalize to -1 to 1
 typedef struct{
    int node;
    int time;
-   float degree;
+   Real degree;
 } Idea;
 
-inline float sigmoid(float a){
+inline Real sigmoid(Real a){
    return 1/(1+exp(-a));
 }
 
-void mprint(vector<float>& arr){
+double norm(double mean, double std){
+   double u = rand()/(double)RAND_MAX;
+   double v = rand()/(double)RAND_MAX;
+   return sqrt(-2*log(u)) * cos(2*M_PI*v)*std + mean;
+}
+
+void mprint(vector<Real>& arr){
    for(int i = 0, iSize = arr.size(); i < iSize; ++i)
       cout << arr[i] << " ";
 }
 
-bool mycomp(const pair<int, float> &a, const pair<int, float> &b){
+bool mycomp(const pair<int, Real> &a, const pair<int, Real> &b){
    return a.second > b.second;
 }
 
@@ -53,7 +62,7 @@ void readTrain(const char* fileName, vector< vector<Idea> > &ideas){
    string line;
    int nowID = -1;
    int node, id;
-   float degree;
+   Real degree;
    string date;
    Idea idea;
 
@@ -72,51 +81,62 @@ void readTrain(const char* fileName, vector< vector<Idea> > &ideas){
    }
 }
 
-int readGraph(const char* fileName, vector<Edge> &edges){
+void readGraph(const char* fileName, vector< vector<Edge> > &edges){
    ifstream fin(fileName);
    string line;
    int node, neighbor;
-   int count = 0;
-   Edge tmpE;
-   tmpE.weight = 0;
+
+   Edge tmp_e;
+   tmp_e.weight = 0;
    
    while(getline(fin, line)){
 
       stringstream sin(line);
       sin >> node;
 
-      tmpE.row = node;
-      tmpE.weight = 0;
+      vector<Edge> tmp_arr;
       neighbor = 0; // for bias term.
+
       do{
-         tmpE.col = neighbor;
-         edges.push_back(tmpE);
+         tmp_e.from = neighbor;
+         tmp_arr.push_back(tmp_e);
       }while(sin >> neighbor);
-      count++;
+
+      edges.resize(node+1);
+      edges[node] = tmp_arr;
    }
-   return count;
 }
 
-void writeModel(const char* fileName, vector<Edge> &edges){
+void writeModel(const char* fileName, vector< vector<Edge> > &edges){
    ofstream fout(fileName);
    for(int i = 0, iSize = edges.size(); i < iSize; ++i){
-      fout << edges[i].row << "\t" << edges[i].col << "\t" << edges[i].weight << endl;
+      fout << i << "\t";
+      for(int j = 0, jSize = edges[i].size(); j < jSize; ++j)
+         fout << edges[i][j].from << " " << edges[i][j].weight << " ";
+      fout << endl;
    }
 }
 
-int readModel(const char* fileName, vector<Edge> &edges){
+void readModel(const char* fileName, vector< vector<Edge> > &edges){
    ifstream fin(fileName);
    string line;
    edges.clear();
-   Edge etmp;
-   int N = -1;
-   while(fin >> line){
+
+   Edge e_tmp;
+   int node;
+
+   while(getline(fin, line)){
       stringstream sin(line);
-      sin >> etmp.row >> etmp.col >> etmp.weight;
-      edges.push_back(etmp);
-      if(N < etmp.row) N = etmp.row;
+      sin >> node;
+
+      vector<Edge> tmp_arr;
+      while(sin >> e_tmp.from >> e_tmp.weight){
+         tmp_arr.push_back(e_tmp);
+      }
+
+      edges.resize(node+1);
+      edges[node] = tmp_arr;
    }
-   return N;
 }
 
 void readTest(const char* fileName, vector< vector<int> > &initAdts){

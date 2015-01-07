@@ -11,117 +11,160 @@
 
 using namespace std;
 
-void train(vector<Edge> &edges, vector< vector<Idea> > &ideas, float ita, int N);
+Real train(vector< vector<Edge> > &edges, vector< vector<Idea> > &ideas, vector< vector<Real> > &moment, Real ita, bool randPerm = true);
 
 void Usage(char* progName){
-   fprintf(stderr, "Usage: %s graph.txt training.txt iteration model.txt\n", progName);
+   fprintf(stderr, "Usage: %s model_in.txt training.txt iteration learning_rate model_out.txt\n", progName);
    exit(-1);
 }
 
 int main(int argc, char** argv){
-   if(argc != 5){
+   if(argc != 6){
       Usage(argv[0]);
    }
 
-   srand(time(NULL));
-   int N;
-   vector<Edge> edges;
+   //srand(time(NULL));
+   vector< vector<Edge> > edges;
+   vector< vector<Edge> > edges_back;
    vector< vector<Idea> > ideas;
+   vector< vector<Real> > moment;
    int iteration = atoi(argv[3]);
+   Real ita = atof(argv[4]);
    
-   fprintf(stderr, "Start reading graph\n");
+   fprintf(stderr, "Start reading models\n");
    // read graph and initialize 
-   N = readGraph(argv[1], edges);
+   readModel(argv[1], edges);
 
    fprintf(stderr, "Start reading training data\n");
    // read training data
    readTrain(argv[2], ideas);
 
+   // initialize moment.
+   moment.resize(edges.size());
+   for(int i = 0, size = edges.size(); i < size; ++i)
+      moment[i].resize(edges[i].size(), 0);
+
    fprintf(stderr, "Start training.\n");
    // start training data
+   Real perr = 1;
    for(int i = 0; i < iteration; ++i){ 
-      train(edges, ideas, 1e-12, N);
-      writeModel(argv[4], edges);
+      Real err = train(edges, ideas, moment, ita);
+      fprintf(stderr, "ita = %e, err = %e\n", ita, err);
+      
+
+      if(err > perr){
+         ita /= 2;
+         edges = edges_back;
+         
+         for(int i = 0, size = edges.size(); i < size; ++i){
+            moment[i].clear();
+            moment[i].resize(edges[i].size(), 0);
+         }
+      }else{
+         ita *= 1.1;
+         edges_back = edges;
+      }
+      perr = err;
+
+      writeModel(argv[5], edges);
    }
 
    fprintf(stderr, "Start writing out model\n");
-   writeModel(argv[4], edges);
+   writeModel(argv[5], edges);
 
    return 0;
 }
 
-void train(vector<Edge> &edges, vector< vector<Idea> > &ideas, float ita, int N){
-   vector<float> grad( edges.size() , 0);
+void trainEdge(int target, Real ans, vector< vector<Real> > &grad, vector< vector<Edge> > &edges, vector<Real> v, Real &err, int &errN){
 
-   vector<float> v0;
-   vector<float> y;
-   vector<float> v;
-   vector<float> diff;
-   float err = 0;
+   Real out = 0;
+   Real diff;
+
+
+   for(int i = 0, size = edges[target].size(); i < size; ++i)
+      out += v[edges[target][i].from] * edges[target][i].weight;
+
+   out = sigmoid(out);
+   diff = out * (1 - out) * (out - ans);
+   for(int i = 0, size = edges[target].size(); i < size; ++i)
+      grad[target][i] += diff * v[edges[target][i].from];
+
+   err += (out - ans) * (out - ans);
+   errN ++;
+
+}
+
+Real train(vector< vector<Edge> > &edges, vector< vector<Idea> > &ideas, vector< vector<Real> > &moment, Real ita, bool randPerm){
+   vector< vector<Real> > grad(edges.size());
+   for(int i = 0, iSize = edges.size(); i < iSize; ++i)
+      grad[i].resize( edges[i].size(), 0);
+
+   vector<Real> v0;
+   vector<Real> v;
+   
+   vector<int> trainset;
+
+   Real err = 0;
    int errN = 0;
+   Real neutral = 0.5;
    
    // random permutation
    vector<int> perm(ideas.size());
    for(int i = 0, size = ideas.size(); i < size; i++)
       perm[i] = i;
 
-  // for(int i = 0, size = ideas.size(); i < size; i++){
-  //    int s = rand() % size;
-  //    int tmp = perm[i];
-  //    perm[i] = perm[s];
-  //    perm[s] = tmp;
-  // }
+   if(randPerm){
+      for(int i = 0, size = ideas.size(); i < size; i++){
+         int s = rand() % size;
+         int tmp = perm[i];
+         perm[i] = perm[s];
+         perm[s] = tmp;
+      }
+   }
+
+   v0.resize(edges.size(), neutral); v0[0] = 1;
 
    for(int i = 0, iSize = ideas.size(); i < iSize; ++i){
 
-      v0.clear(); v0.resize(N+1, 0.5); v0[0] = 1; // for bias term
-      y.clear(); y.resize(N+1, 0.5); y[0] = 1;    // for bias term
+      v.clear(); v.resize(edges.size(), neutral); v[0] = 1; // for bias term
 
       int now = ideas[perm[i]][0].time;
-      for(int j = 0, jSize = ideas[perm[i]].size(); j < jSize; ++j)
-         y[ideas[perm[i]][j].node] = ideas[perm[i]][j].degree;
-
       //bool first = true;
 
-      for(int j = 0, jSize = ideas[perm[i]].size(); j < jSize; ++j){
-         //y[ideas[perm[i]][j].node] = ideas[perm[i]][j].degree;
-         v0[ideas[perm[i]][j].node] = ideas[perm[i]][j].degree;
+      trainset.clear();
 
-         // train per month
-         if( ideas[perm[i]][j].time - now > 31 ){
+      for(int j = 0, jSize = ideas[perm[i]].size(); j < jSize; ++j){
+
+         // train start when date is not the same
+         if( ideas[perm[i]][j].time != now ){
             now = ideas[perm[i]][j].time;
 
-            // calculate gradient!
-            // v = sigmoid(M * v0)
-            // dM = 1 / (v-y) * v * (1-v) * v0 
-            //if(!first){
-            v.clear(); v.resize(N+1, 0); 
-            diff.clear(); diff.resize(N+1, 0);
+            for(int k = 0, kSize = trainset.size(); k < kSize; k++){
+               int target = trainset[k];
 
-            // do matrix-vector multiplication
-            for(int k = 0, kSize = edges.size(); k < kSize; ++k){
-               v[edges[k].row] += edges[k].weight * v0[edges[k].col];
+               // for the neutral one
+               trainEdge(target, neutral, grad, edges, v0, err, errN);
+
+               // for the turn on one
+               trainEdge(target, v[target], grad, edges, v, err, errN);
             }
 
-            for(int k = 0; k < N+1; ++k)
-               v[k] = sigmoid(v[k]);
-
-            // diff = 1/(v-y) * v * (1-v)
-            for(int k = 0; k < N+1; ++k){
-               diff[k] = (v[k] - y[k]) * v[k] * (1 - v[k]);
-               //if(!isfinite(diff[k])) diff[k] = GRAD_MAX;
-               err += (v[k] - y[k]) * (v[k] - y[k]);
-               errN++;
-            }
-
-            for(int k = 0, kSize = edges.size(); k < kSize; ++k){
-               grad[k] += diff[edges[k].row] * v0[edges[k].col];
-            }
-            //}
-
-            //v0 = y;
-            //first = false;
+            trainset.clear();
          }
+
+         v[ideas[perm[i]][j].node] = ideas[perm[i]][j].degree;
+         trainset.push_back(ideas[perm[i]][j].node);
+      }
+
+      // watch out for the last one!!!!
+      for(int k = 0, kSize = trainset.size(); k < kSize; k++){
+         int target = trainset[k];
+
+         // for the neutral one
+         trainEdge(target, neutral, grad, edges, v0, err, errN);
+
+         // for the turn on one
+         trainEdge(target, v[target], grad, edges, v, err, errN);
       }
 
       //fprintf(stderr, ".");
@@ -132,10 +175,19 @@ void train(vector<Edge> &edges, vector< vector<Idea> > &ideas, float ita, int N)
       //   grad.clear();
       //   grad.resize(edges.size(), 0);
       //}
+
+      // update after each idea!!!
+      for(int j = 0, jSize = edges.size(); j < jSize; ++j)
+         for(int k = 0, kSize = edges[j].size(); k < kSize; ++k){
+            moment[j][k] = moment[j][k] * 0.9 + grad[j][k];
+            //edges[j][k].weight -= ita * grad[j][k];
+            edges[j][k].weight -= ita * moment[j][k];
+            grad[j][k] = 0;
+         }
    }
-   //fprintf(stderr, "\n");
-   for(int i = 0, iSize = edges.size(); i < iSize; ++i)
-      edges[i].weight -= ita * grad[i];
-   fprintf(stdout, "%lf\n", err/errN);
+
+
+
+   return err/errN;
 }
 
