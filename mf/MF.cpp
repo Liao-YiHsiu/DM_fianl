@@ -29,14 +29,20 @@ int main(int argc, const char* argv[]){
    const char* mf_prog = argv[1];
    const char* tmp_dir = argc == 7? argv[6]:"./tmp";
    createDir(tmp_dir);
+
+   fprintf(stderr, "read Graph.\n");
    readGraph( argv[2], edges);
    int N = edges.size()-1;
+
+   fprintf(stderr, "read Train.\n");
    readTrain(argv[3], ideas);
    readTest(argv[4], initAdpt);
 
+   fprintf(stderr, "write training data.\n");
    sprintf(file1, "%s/data.tr", tmp_dir);
    writeTrain(file1, ideas, initAdpt, N);
 
+   fprintf(stderr, "write testing data.\n");
    sprintf(file2, "%s/data.te", tmp_dir);
    writeTest(file2, ideas, initAdpt, N);
 
@@ -47,7 +53,7 @@ int main(int argc, const char* argv[]){
    system(cmd);
 
    // train
-   sprintf(cmd, "%s train --tr-rmse --obj -k 50 -t 1000 -s 8 -p 0.05 -q 0.05 -g 0.003 -ub -1 -ib -1 --no-use-avg --rand-shuffle -v %s.bin %s.bin %s/model", mf_prog, file1, file1, tmp_dir);
+   sprintf(cmd, "%s train --tr-rmse --obj -k 50 -t 10 -s 8 -p 0.05 -q 0.05 -g 0.003 -ub -1 -ib -1 --no-use-avg --rand-shuffle -v %s.bin %s.bin %s/model", mf_prog, file1, file1, tmp_dir);
    system(cmd);
 
    // predict
@@ -62,19 +68,21 @@ int main(int argc, const char* argv[]){
 }
 
 void writeTrain(const char* fileName, vector< vector<Idea> >& ideas, vector< vector<int> >& initAdpt, int N){
-   ofstream fout(fileName);
-   vector<float> arr;
+   //ofstream fout(fileName);
+   FILE* file = fopen(fileName, "w");
+   vector<float> arr(N);
    
    for(int i = 0, iSize = ideas.size(); i < iSize; ++i){
-      arr.clear();
-      arr.resize(N, 0.5);
+      for(int j = 0; j < N; ++j)
+         arr[j] = 0.5;
 
       for(int j = 0, jSize = ideas[i].size(); j < jSize; ++j)
          arr[ ideas[i][j].node -1 ] = ideas[i][j].degree;
          //fout << ideas[i][j].node -1 << " " << i << " " << ideas[i][j].degree << endl; 
 
       for(int j = 0; j < N; ++j)
-         fout << j << " " << i << " " << arr[j] << endl; 
+         fprintf(file, "%d %d %f\n", j, i, arr[j]);
+         //fout << j << " " << i << " " << arr[j] << endl; 
    }
    int count = ideas.size();
 
@@ -88,7 +96,8 @@ void writeTrain(const char* fileName, vector< vector<Idea> >& ideas, vector< vec
       //   fout << j << " " << i + count << " " << arr[j] << endl;
 
       for(int j = 0, jSize = initAdpt[i].size(); j < jSize; ++j)
-         fout << initAdpt[i][j] -1 << " " << i+count << " " << 0.8 << endl;
+         fprintf(file, "%d %d %f\n", initAdpt[i][j] - 1, i+count, 0.8);
+         //fout << initAdpt[i][j] -1 << " " << i+count << " " << 0.8 << endl;
    }
 
 }
