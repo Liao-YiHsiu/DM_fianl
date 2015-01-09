@@ -18,7 +18,7 @@ $(MODEL):
 	./nn_graph ../graph.txt $(MODEL)
 
 run: $(MODEL) all
-	./nn_train $(MODEL) ../training.txt 1000 1 $(MODEL)
+	./nn_train $(MODEL) ../training.txt 1000 1e-3 $(MODEL)
 
 test: all
 	./nn_test $(MODEL) ../test_data/test_data_q1.txt a1.txt

@@ -15,6 +15,8 @@ int main(int argc, char* argv[]){
 
    readGraph(argv[1], edges);
 
+   srand(time(NULL));
+
    // random initialize weights.
    for(int i = 0, iSize = edges.size(); i < iSize; ++i){
       for(int j = 0, jSize = edges[i].size(); j < jSize; ++j)

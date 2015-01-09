@@ -84,8 +84,10 @@ void trainEdge(int target, Real ans, vector< vector<Real> > &grad, vector< vecto
    for(int i = 0, size = edges[target].size(); i < size; ++i)
       out += v[edges[target][i].from] * edges[target][i].weight;
 
-   out = sigmoid(out);
-   diff = out * (1 - out) * (out - ans);
+   //out = sigmoid(out);
+   //diff = out * (1 - out) * (out - ans);
+   diff = out-ans;
+   
    for(int i = 0, size = edges[target].size(); i < size; ++i)
       grad[target][i] += diff * v[edges[target][i].from];
 
@@ -143,7 +145,7 @@ Real train(vector< vector<Edge> > &edges, vector< vector<Idea> > &ideas, vector<
                int target = trainset[k];
 
                // for the neutral one
-               //trainEdge(target, neutral, grad, edges, v0, err, errN);
+               trainEdge(target, neutral, grad, edges, v0, err, errN);
 
                // for the turn on one
                trainEdge(target, v[target], grad, edges, v, err, errN);

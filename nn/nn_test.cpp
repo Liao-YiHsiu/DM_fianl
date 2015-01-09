@@ -69,8 +69,8 @@ void test(vector< vector<Edge> >& edges, vector< vector<int> > &initAdts, vector
             for(int l = 0, lSize = edges[k].size(); l < lSize; ++l)
                v[k] += edges[k][l].weight * v0[edges[k][l].from];
 
-         for(int k = 0; k < edges.size(); ++k)
-            v[k] = sigmoid(v[k]);
+         //for(int k = 0; k < edges.size(); ++k)
+         //   v[k] = sigmoid(v[k]);
 
          v0 = v;
          //fprintf(stderr, ".");
