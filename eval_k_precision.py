@@ -61,6 +61,7 @@ if __name__ == '__main__':
 	print k_recall
 	fscore += 2.0 / ((1.0/k_precision) + (1.0/k_recall))
 	''' 
+
     try:
         for i in range(len(plt_x)):
             plt.plot(plt_x[i], plt_y[i])
