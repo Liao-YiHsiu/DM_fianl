@@ -16,11 +16,11 @@ if __name__ == '__main__':
     line_count = 0
     plt_x = []
     plt_y = []
-
+    precision = 0
+    recall = 0
     while True:
         pre_line = predict.readline()
 	ans_line = answers.readline()
-	line_count += 1
 	exit = False
 	if not pre_line:
 	    sys.stderr.write("EOF for " + sys.argv[1] + "\n" );
@@ -31,12 +31,14 @@ if __name__ == '__main__':
 	if exit:
 	    break
     
+	line_count += 1
+
     	predictions = pre_line.rstrip("\n").split() 
 	adopters    = ans_line.rstrip("\n").split() 
 	#print predictions
 	predict_count += len(predictions)
 	answer_count += len(adopters)
-
+	
 	idea_correct = 0
         y = empty(len(predictions))
 #plt_y = zeros((len(predictions), 1))
@@ -51,8 +53,11 @@ if __name__ == '__main__':
 #sys.stdout.write( "\n")
         plt_x.append(arange(1, len(predictions)+1))
         plt_y.append(y)
-
-     
+	precision += k_precision
+	#print precision
+	recall    += float(idea_correct) / float( len(adopters) ) 
+	#print recall
+	 
     try:
         for i in range(len(plt_x)):
             plt.plot(plt_x[i], plt_y[i])
@@ -65,12 +70,12 @@ if __name__ == '__main__':
         plt.show();
     except:
         print "no display"
-       
+	       
 
-    precision = float(correct)/float(predict_count) 
-    print( "precision = %d / %d , %4f" %( correct, predict_count, precision ) )
-    recall = float(correct)/float(answer_count) 
-    print( "recall    = %d / %d , %4f" %( correct, answer_count, recall ) )
+    precision /= float(line_count)
+    print( "precision = %4f" %( precision ) )
+    recall /= float( line_count )
+    print( "recall    = %4f" %( recall ) )
     f_measure = 2.0 / ((1.0/precision) + (1.0/recall) )
     print( "f-measure = %4f" %( f_measure ) )
 
