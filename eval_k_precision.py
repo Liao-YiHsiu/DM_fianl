@@ -51,15 +51,20 @@ if __name__ == '__main__':
 #sys.stdout.write( "\n")
         plt_x.append(arange(1, len(predictions)+1))
         plt_y.append(y)
-     
-    for i in range(len(plt_x)):
-        plt.plot(plt_x[i], plt_y[i])
 
-    plt.ylim(0, 1.1)
-    plt.xlabel("# of data") 
-    plt.ylabel("precision") 
-    plt.title("The Title") 
-    plt.show() 
+    try: 
+       fig = plt.figure();
+       if hasattr(fig, "show"):
+           for i in range(len(plt_x)):
+               plt.plot(plt_x[i], plt_y[i])
+
+           plt.ylim(0, 1.1)
+           plt.xlabel("# of data") 
+           plt.ylabel("precision") 
+           plt.title("The Title") 
+       
+    except:
+       print "no display"
 
     precision = float(correct)/float(predict_count) 
     print( "precision = %d / %d , %4f" %( correct, predict_count, precision ) )

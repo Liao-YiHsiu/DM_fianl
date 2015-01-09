@@ -57,7 +57,7 @@ void test(vector< vector<Edge> >& edges, vector< vector<int> > &initAdts, vector
       v0.clear(); v0.resize(edges.size(), neutral); v0[0] = 1; // for bias term
 
       // inference 1 time.
-      for (int j = 0; j < 10; ++j){
+      for (int j = 0; j < 50; ++j){
 
          for(int k = 0, kSize = initAdts[i].size(); k < kSize; ++k){
             v0[initAdts[i][k]] = 1;

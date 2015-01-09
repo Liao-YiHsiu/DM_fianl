@@ -3,7 +3,7 @@
 LDFLAGS+=-lm # link to math library
 
 TARGET=nn_train nn_graph nn_test
-MODEL=model.txt
+MODEL=model4.txt
 
 all: $(TARGET)
 # type make/make all to compile test_hmm
@@ -18,7 +18,7 @@ $(MODEL):
 	./nn_graph ../graph.txt $(MODEL)
 
 run: $(MODEL) all
-	./nn_train $(MODEL) ../training.txt 1000 1e-3 $(MODEL)
+	./nn_train $(MODEL) ../training.txt 1000 1 $(MODEL)
 
 test: all
 	./nn_test $(MODEL) ../test_data/test_data_q1.txt a1.txt
