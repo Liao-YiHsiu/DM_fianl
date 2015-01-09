@@ -18,6 +18,7 @@ if __name__ == '__main__':
     plt_y = []
     precision = 0
     recall = 0
+    fscore = 0
     while True:
         pre_line = predict.readline()
 	ans_line = answers.readline()
@@ -54,10 +55,12 @@ if __name__ == '__main__':
         plt_x.append(arange(1, len(predictions)+1))
         plt_y.append(y)
 	precision += k_precision
-	#print precision
-	recall    += float(idea_correct) / float( len(adopters) ) 
-	#print recall
-	 
+	print k_precision
+	k_recall = float(idea_correct) / float( len(adopters))
+	recall    += k_recall
+	print k_recall
+	fscore += 2.0 / ((1.0/k_precision) + (1.0/k_recall))
+	''' 
     try:
         for i in range(len(plt_x)):
             plt.plot(plt_x[i], plt_y[i])
@@ -70,13 +73,13 @@ if __name__ == '__main__':
         plt.show();
     except:
         print "no display"
-	       
+	'''       
 
     precision /= float(line_count)
     print( "precision = %4f" %( precision ) )
     recall /= float( line_count )
     print( "recall    = %4f" %( recall ) )
-    f_measure = 2.0 / ((1.0/precision) + (1.0/recall) )
+    f_measure = fscore / float(line_count)
     print( "f-measure = %4f" %( f_measure ) )
 
 
