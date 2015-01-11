@@ -15,7 +15,7 @@ void Usage(const char* progName){
 }
 void writeTrain(const char* fileName, vector< vector<Idea> >& ideas, vector< vector<int> >& initAdpt, int N); 
 void writeTest(const char* fileName, vector< vector<Idea> >& ideas, vector< vector<int> >& initAdpt, int N);
-void writeAns(const char* fileName, const char* output, vector< vector<int> >& initAdpt, int num, int N);
+void getAns(const char*fileName, vector< vector<int> >& initAdpt, vector< vector<int> > &ans, int num, int N);
 
 int main(int argc, const char* argv[]){
    if( argc < 6 || argc > 8 )
@@ -24,6 +24,11 @@ int main(int argc, const char* argv[]){
    vector< vector<Edge> > edges;
    vector< vector<Idea> > ideas;
    vector< vector<int> > initAdpt;
+   vector< vector<int> > adpt;
+   vector< vector<int> > ans;
+
+   int totalAns = 100;
+   int stepAns = 1;
 
    char file1[BUF], file2[BUF], cmd[BUF];
    const char* mf_prog = argv[1];
@@ -38,46 +43,57 @@ int main(int argc, const char* argv[]){
    readTrain(argv[3], ideas);
    readTest(argv[4], initAdpt);
 
-   fprintf(stderr, "write training data.\n");
-   sprintf(file1, "%s/data.tr", tmp_dir);
-   writeTrain(file1, ideas, initAdpt, N);
+   ans.resize(initAdpt.size());
 
-   fprintf(stderr, "write testing data.\n");
-   sprintf(file2, "%s/data.te", tmp_dir);
-   writeTest(file2, ideas, initAdpt, N);
+   for(int i = 0; i < totalAns; i+= stepAns){
+      adpt = initAdpt;
+      // add PRF into initAdpts.
+      for(int j = 0, jSize = ans.size(); j < jSize; ++j)
+         for(int k = 0, kSize = ans[k].size(); k < kSize; ++k)
+            adpt[j].push_back(ans[j][k]);
 
-   // convert
-   sprintf(cmd, "%s convert %s %s.bin", mf_prog, file1, file1); 
-   system(cmd);
-   sprintf(cmd, "%s convert %s %s.bin", mf_prog, file2, file2); 
-   system(cmd);
+      fprintf(stderr, "write training data.\n");
+      sprintf(file1, "%s/data.tr", tmp_dir);
+      writeTrain(file1, ideas, adpt, N);
 
-   // train
-   sprintf(cmd, "%s train --tr-rmse --obj -k 50 -t 10 -s 8 -p 0.05 -q 0.05 -g 0.003 -ub -1 -ib -1 --no-use-avg --rand-shuffle -v %s.bin %s.bin %s/model", mf_prog, file1, file1, tmp_dir);
-   system(cmd);
+      fprintf(stderr, "write testing data.\n");
+      sprintf(file2, "%s/data.te", tmp_dir);
+      writeTest(file2, ideas, adpt, N);
 
-   // predict
-   sprintf(cmd, "%s predict %s.bin %s/model %s/output", mf_prog, file2, tmp_dir, tmp_dir);
-   system(cmd);
+      // convert
+      sprintf(cmd, "%s convert %s %s.bin", mf_prog, file1, file1); 
+      system(cmd);
+      sprintf(cmd, "%s convert %s %s.bin", mf_prog, file2, file2); 
+      system(cmd);
 
-   sprintf(file1, "%s/output", tmp_dir);
-   writeAns(argv[5], file1, initAdpt, 100, N);
+      // train
+      sprintf(cmd, "%s train --tr-rmse --obj -k 50 -t 10 -s 8 -p 0.05 -q 0.05 -g 0.003 -ub -1 -ib -1 --no-use-avg --rand-shuffle -v %s.bin %s.bin %s/model", mf_prog, file1, file1, tmp_dir);
+      system(cmd);
 
+      // predict
+      sprintf(cmd, "%s predict %s.bin %s/model %s/output", mf_prog, file2, tmp_dir, tmp_dir);
+      system(cmd);
 
+      sprintf(file1, "%s/output", tmp_dir);
+      getAns(file1, adpt, ans, stepAns, N);
+   }
+   writeAns(argv[5], ans);
    return 0;
 }
 
 void writeTrain(const char* fileName, vector< vector<Idea> >& ideas, vector< vector<int> >& initAdpt, int N){
    //ofstream fout(fileName);
    FILE* file = fopen(fileName, "w");
-   vector<float> arr(N);
+   vector<Real> arr(N);
+   Real neutral = 0;
    
    for(int i = 0, iSize = ideas.size(); i < iSize; ++i){
       for(int j = 0; j < N; ++j)
-         arr[j] = 0.5;
+         arr[j] = neutral;
 
       for(int j = 0, jSize = ideas[i].size(); j < jSize; ++j)
-         arr[ ideas[i][j].node -1 ] = ideas[i][j].degree;
+         //arr[ ideas[i][j].node -1 ] = ideas[i][j].degree;
+         arr[ ideas[i][j].node -1 ] = 1;
          //fout << ideas[i][j].node -1 << " " << i << " " << ideas[i][j].degree << endl; 
 
       for(int j = 0; j < N; ++j)
@@ -127,11 +143,12 @@ void readScores(const char* fileName, vector< vector<float> > &scores, int N){
 
 }
 
-void writeAns(const char* fileName, const char* output, vector< vector<int> >& initAdpt, int num, int N){
-   ofstream fout(fileName);
+void getAns(const char*fileName, vector< vector<int> >& initAdpt, vector< vector<int> > &ans, int num, int N){
+
+   assert(initAdpt.size() == ans.size());
 
    vector< vector<float> > scores;
-   readScores(output, scores, N);
+   readScores(fileName, scores, N);
 
    for(int i = 0, iSize = initAdpt.size(); i < iSize; ++i){
       vector< pair<int, float> > arr;
@@ -145,11 +162,10 @@ void writeAns(const char* fileName, const char* output, vector< vector<int> >& i
       for(int j = 0, jSize = arr.size(); j < jSize; ++j){
          if( counter >= num) break;
          if( arr[j].first != -1){
-            fout << arr[j].first+1 << " ";
+            ans[i].push_back(arr[j].first+1);
             counter++;
          }
       }
-      fout << endl;
    }
-   
 }
+
