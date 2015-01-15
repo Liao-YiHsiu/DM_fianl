@@ -20,14 +20,16 @@ function answer = run(graph_file, train_file, test_file, out_file, N)
 
    
    % fill matrix for svd
-   matrix = 0.5*ones(size(train, 2)+size(test, 2), size(graph, 2));
+   matrix = zeros(size(train, 2)+size(test, 2), size(graph, 2));
+   %matrix = 0.5*ones(size(train, 2)+size(test, 2), size(graph, 2));
 
    for j = 1:size(train, 2) 
-     matrix(j, train{j}.node) = train{j}.degree; 
+     %matrix(j, train{j}.node) = train{j}.degree; 
+     matrix(j, train{j}.node) = 1; 
    end
 
    for j = 1:size(test, 2)
-      matrix(size(train,2)+j, test{j}) = 0.8;
+      matrix(size(train,2)+j, test{j}) = 1;
    end
 
    fprintf(2, 'start svd...\n');
