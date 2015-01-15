@@ -102,10 +102,6 @@ void train(vector< vector<Idea> > &ideas, vector< array > &model, char* outFile,
       }
       pre_err = err;
 
-      if(i % 200 == 0){
-         ofstream fout(outFile);
-         writeModel(fout, model);
-      }
    }
    ofstream fout(outFile);
    writeModel(fout, model);
