@@ -1,0 +1,9 @@
+precision = 0.386000
+recall    = 0.139588
+f-measure = 0.174192
+precision = 0.425000
+recall    = 0.113818
+f-measure = 0.145347
+precision = 0.465000
+recall    = 0.118642
+f-measure = 0.176211
