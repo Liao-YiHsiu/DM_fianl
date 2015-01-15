@@ -19,6 +19,9 @@ run: all
 	./test model.txt ../test_data/test_data_q1.txt a1.txt
 	./test model.txt ../test_data/test_data_q2.txt a2.txt
 	./test model.txt ../test_data/test_data_q3.txt a3.txt
+	python ../eval_k_precision.py a1.txt ../test_data/test_data_a1.txt | tee result.txt
+	python ../eval_k_precision.py a2.txt ../test_data/test_data_a2.txt | tee -a result.txt
+	python ../eval_k_precision.py a3.txt ../test_data/test_data_a3.txt | tee -a result.txt
 
 eval: all
 	python ../eval_k_precision.py a1.txt ../test_data/test_data_a1.txt | tee result.txt

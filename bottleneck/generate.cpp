@@ -35,7 +35,7 @@ int main(int argc, char* argv[]){
 
    vector<int> hidden;
    hidden.push_back(edges.size());
-   hidden.push_back(200);
+   hidden.push_back(300);
    hidden.push_back(edges.size());
 
    build(model, hidden);
