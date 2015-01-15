@@ -176,4 +176,31 @@ void createDir(const char* dirName){
    
 }
 
+// rank answer by score, and exclue thoes initAdpts
+void rankAns(vector<int> &ans, vector<Real> &score, vector<int> &exclude, int topN){
+
+   vector<int> index;
+
+   index.clear(); index.resize(score.size(), 0);
+   for(int j = 0; j < score.size(); ++j)
+      index[j] = j;
+
+   // eliminate initial adopters and 0
+   for(int j = 0, jSize = exclude.size(); j < jSize; ++j)
+      index[exclude[j]] = -1;
+   //index[0] = -1;
+
+   vector< pair<int, Real> > arr;
+   for(int j = 0; j < score.size(); j++)
+      if(index[j] != -1)
+         arr.push_back(pair<int, Real>(index[j], score[j]));
+
+   sort(arr.begin(), arr.end(), mycomp);
+
+   ans.clear();
+   ans.resize(topN, -1);
+   for(int j = 0; j < topN; ++j)
+      ans[j] = arr[j].first;
+}
+
 #endif
