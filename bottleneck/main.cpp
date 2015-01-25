@@ -84,10 +84,9 @@ void train(vector< vector<Idea> > &ideas, vector< array > &model, char* outFile,
       backward(label, model, layers, delta, sigmoid_, ppd, err);
 
       for(int j = 0, jSize = model.size(); j < jSize; ++j){
-         //momenten[j] *= 0.9;
-         //momenten[j] += ppd[j];
-         //model[j] -= ita * momenten[j];
-         model[j] -= ita * ppd[j];
+         momenten[j] = momenten[j]*0.9 + ppd[j];
+         model[j] -= ita * momenten[j];
+         //model[j] -= ita * ppd[j];
       }
 
       cerr << "ita = " << ita <<  " error = " << err << endl;

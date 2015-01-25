@@ -15,7 +15,7 @@ debug: all
 
 run: all
 	./generate ../graph.txt model_init.txt
-	./main model.txt ../training.txt 1000 1e-3 model_init.txt
+	./main model.txt ../training.txt 2000 1e-3 model_init.txt
 	./test model.txt ../test_data/test_data_q1.txt a1.txt
 	./test model.txt ../test_data/test_data_q2.txt a2.txt
 	./test model.txt ../test_data/test_data_q3.txt a3.txt

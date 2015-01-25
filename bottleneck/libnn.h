@@ -64,11 +64,11 @@ void backward(array &label, vector< array > &model, vector< array > &layers, vec
 }
 
 array relu(array &in){
-   return (in > 0)*in;
+   return max(in, 0);
 }
 
 array relu_(array &y){
-   return (y > 1e-10);
+   return y>0;
 }
 
 array sigmoid_(array &y){
