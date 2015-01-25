@@ -1,10 +1,12 @@
 #include <iostream>
 #include <stdlib.h>
-#include <stdio.h>
 #include <fstream>
 #include <vector>
 #include <algorithm>
 #include <assert.h>
+#include <string>
+#include <stdio.h>
+#include <sstream>
 #include "nn.h"
 #define BUF 1024
 using namespace std;
@@ -28,7 +30,7 @@ int main(int argc, const char* argv[]){
    vector< vector<int> > ans;
 
    int totalAns = 100;
-   int stepAns = 1;
+   int stepAns = 100;
 
    char file1[BUF], file2[BUF], cmd[BUF];
    const char* mf_prog = argv[1];
@@ -43,41 +45,65 @@ int main(int argc, const char* argv[]){
    readTrain(argv[3], ideas);
    readTest(argv[4], initAdpt);
 
-   ans.resize(initAdpt.size());
 
-   for(int i = 0; i < totalAns; i+= stepAns){
-      adpt = initAdpt;
-      // add PRF into initAdpts.
-      for(int j = 0, jSize = ans.size(); j < jSize; ++j)
-         for(int k = 0, kSize = ans[k].size(); k < kSize; ++k)
-            adpt[j].push_back(ans[j][k]);
+   string output_string;
+   string argv5(argv[5]);
+   for( double k=16; k<=2048; k*=2 )
+   for( double t=10; t<=160; t*=2 )
+   for( double p=0.001; p<=0.081; p*=3 )
+   for( double q=0.001; q<=0.081; q*=3 ){
+	   stringstream sk, st, sp, sq;
+	   string strk, strt, strp, strq;
+	   sk<<k;
+	   st<<t;
+	   sp<<p;
+	   sq<<q;
+	   sk>>strk;
+	   st>>strt;
+	   sp>>strp;
+	   sq>>strq;
+	   string command("%s train --tr-rmse --obj -k "+strk+" -t "+strt+" -s 8 -p "+strp+" -q "+strq+" -g 0.003 -ub -1 -ib -1 --no-use-avg --rand-shuffle -v %s.bin %s.bin %s/model");
+	   printf("k=%f \t t=%f \t p=%f \t q=%f \n",k,t,p,q);
+	   output_string = argv5+"_k"+strk+"_t"+strt+"_p"+strp+"_q"+strq;
 
-      fprintf(stderr, "write training data.\n");
-      sprintf(file1, "%s/data.tr", tmp_dir);
-      writeTrain(file1, ideas, adpt, N);
+	   ans.clear();
+       ans.resize(initAdpt.size());
 
-      fprintf(stderr, "write testing data.\n");
-      sprintf(file2, "%s/data.te", tmp_dir);
-      writeTest(file2, ideas, adpt, N);
+       for(int i = 0; i < totalAns; i+= stepAns){
+           adpt = initAdpt;
+		   // add PRF into initAdpts.
+		   for(int j = 0, jSize = ans.size(); j < jSize; ++j)
+				   for(int k = 0, kSize = ans[k].size(); k < kSize; ++k)
+						   adpt[j].push_back(ans[j][k]);
 
-      // convert
-      sprintf(cmd, "%s convert %s %s.bin", mf_prog, file1, file1); 
-      system(cmd);
-      sprintf(cmd, "%s convert %s %s.bin", mf_prog, file2, file2); 
-      system(cmd);
+		   fprintf(stderr, "write training data.\n");
+		   sprintf(file1, "%s/data.tr", tmp_dir);
+		   writeTrain(file1, ideas, adpt, N);
 
-      // train
-      sprintf(cmd, "%s train --tr-rmse --obj -k 50 -t 10 -s 8 -p 0.05 -q 0.05 -g 0.003 -ub -1 -ib -1 --no-use-avg --rand-shuffle -v %s.bin %s.bin %s/model", mf_prog, file1, file1, tmp_dir);
-      system(cmd);
+		   fprintf(stderr, "write testing data.\n");
+		   sprintf(file2, "%s/data.te", tmp_dir);
+		   writeTest(file2, ideas, adpt, N);
 
-      // predict
-      sprintf(cmd, "%s predict %s.bin %s/model %s/output", mf_prog, file2, tmp_dir, tmp_dir);
-      system(cmd);
+		   // convert
+		   sprintf(cmd, "%s convert %s %s.bin", mf_prog, file1, file1); 
+		   system(cmd);
+		   sprintf(cmd, "%s convert %s %s.bin", mf_prog, file2, file2); 
+		   system(cmd);
 
-      sprintf(file1, "%s/output", tmp_dir);
-      getAns(file1, adpt, ans, stepAns, N);
+		   // train
+		   sprintf(cmd, command.c_str(), mf_prog, file1, file1, tmp_dir);
+		   //sprintf(cmd, "%s train --tr-rmse --obj -k 50 -t 10 -s 8 -p 0.05 -q 0.05 -g 0.003 -ub -1 -ib -1 --no-use-avg --rand-shuffle -v %s.bin %s.bin %s/model", mf_prog, file1, file1, tmp_dir);
+		   system(cmd);
+
+		   // predict
+		   sprintf(cmd, "%s predict %s.bin %s/model %s/output", mf_prog, file2, tmp_dir, tmp_dir);
+		   system(cmd);
+
+		   sprintf(file1, "%s/output", tmp_dir);
+		   getAns(file1, adpt, ans, stepAns, N);
+	   }
+	   writeAns(output_string.c_str(), ans);
    }
-   writeAns(argv[5], ans);
    return 0;
 }
 

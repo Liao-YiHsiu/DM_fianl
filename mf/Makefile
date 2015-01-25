@@ -3,7 +3,7 @@
 LDFLAGS+=-lm # link to math library
 LIBMF=~/libmf-1.1/libmf
 
-RAMDISK=/tmp/ramdisk
+RAMDISK=tmp
 TARGET=MF
 RESULT=a1.txt a2.txt a3.txt
 
@@ -19,14 +19,12 @@ debug: all
 run: all
 	cp ../graph.txt $(RAMDISK)
 	cp ../training.txt $(RAMDISK)
-	./MF $(LIBMF) $(RAMDISK)/graph.txt $(RAMDISK)/training.txt ../test_data/test_data_q1.txt a1.txt $(RAMDISK)
-	./MF $(LIBMF) $(RAMDISK)/graph.txt $(RAMDISK)/training.txt ../test_data/test_data_q2.txt a2.txt $(RAMDISK)
-	./MF $(LIBMF) $(RAMDISK)/graph.txt $(RAMDISK)/training.txt ../test_data/test_data_q3.txt a3.txt $(RAMDISK)
+	./MF $(LIBMF) $(RAMDISK)/graph.txt $(RAMDISK)/training.txt ../test_data/test_data_q1.txt results/a1.txt $(RAMDISK)
+	./MF $(LIBMF) $(RAMDISK)/graph.txt $(RAMDISK)/training.txt ../test_data/test_data_q2.txt results/a2.txt $(RAMDISK)
+	./MF $(LIBMF) $(RAMDISK)/graph.txt $(RAMDISK)/training.txt ../test_data/test_data_q3.txt results/a3.txt $(RAMDISK)
 
 test: all
-	python ../eval_k_precision.py a1.txt ../test_data/test_data_a1.txt | tee result.txt
-	python ../eval_k_precision.py a2.txt ../test_data/test_data_a2.txt | tee -a result.txt
-	python ../eval_k_precision.py a3.txt ../test_data/test_data_a3.txt | tee -a result.txt
+	./test.sh
 
 
 clean:
