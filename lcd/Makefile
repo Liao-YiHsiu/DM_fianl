@@ -1,3 +1,5 @@
+all:
+
 run: 
 	./predict.sh
 test: 

@@ -17,9 +17,10 @@ run: all
 	./baseline ../graph.txt ../test_data/test_data_q1.txt a1.txt
 	./baseline ../graph.txt ../test_data/test_data_q2.txt a2.txt
 	./baseline ../graph.txt ../test_data/test_data_q3.txt a3.txt
-	python ../eval.py a1.txt ../test_data/test_data_a1.txt
-	python ../eval.py a2.txt ../test_data/test_data_a2.txt
-	python ../eval.py a3.txt ../test_data/test_data_a3.txt
+test:
+	python ../eval_k_precision.py a1.txt ../test_data/test_data_a1.txt
+	python ../eval_k_precision.py a2.txt ../test_data/test_data_a2.txt
+	python ../eval_k_precision.py a3.txt ../test_data/test_data_a3.txt
 
 clean:
 	$(RM) $(TARGET)   # type make clean to remove the compiled file

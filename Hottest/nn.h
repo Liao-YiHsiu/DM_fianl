@@ -1,1 +1,1 @@
-../nn/nn.h
+../NeuralNetwork/nn.h
