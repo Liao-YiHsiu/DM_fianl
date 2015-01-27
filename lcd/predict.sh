@@ -14,6 +14,7 @@ cat ../valid_data/valid_data_q1.txt ../valid_data/valid_data_q2.txt ../valid_dat
 split -l 20 result a
 mv aaa vad_a1.txt
 mv aab vad_a2.txt
-mv aac vad_a3.txt
+cat aac aad >vad_a3.txt
+rm aac aad
 rm result
 rm cat_query
