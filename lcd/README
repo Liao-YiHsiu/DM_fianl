@@ -1,0 +1,17 @@
+
+to run the script, please type:
+	make run
+and then, it will generate 6 files
+
+1. testing result:
+	a1.txt
+	a2.txt
+	a3.txt
+2. validation result:
+	vad_a1.txt
+	vad_a2.txt
+	vad_a3.txt
+
+type :
+	make test
+and you can check the performance about testing data
