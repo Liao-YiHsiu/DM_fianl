@@ -4,7 +4,34 @@ Environment:
    Ubuntu 14.04
 
 Files:
-   
+
+├── AutoEncoder          : Neural Network with Auto Encoder
+├── baseline             : TA's baseline model
+├── Hottest              : Hottest Recommendation Model
+├── lcd                  : Local Community Detection Model
+├── mf                   : Matrix Factorization Model
+├── NeuralNetwork        : Neural Network Model
+├── svd                  : Singular Value Decomposition
+│
+├── eval_k_precision.py
+├── graph.txt
+├── ReadMe               : the Readme file
+├── Report.pdf           : the report.
+├── test_data
+│   ├── test_data_a1.txt
+│   ├── test_data_a2.txt
+│   ├── test_data_a3.txt
+│   ├── test_data_q1.txt
+│   ├── test_data_q2.txt
+│   └── test_data_q3.txt
+├── training.txt
+└── valid_data
+    ├── valid_data_q1.txt
+    ├── valid_data_q2.txt
+    └── valid_data_q3.txt
+
+
+
 
 How to execute: 
    Enter each directory and type the following command.
@@ -13,3 +40,11 @@ How to execute:
 
    the above command should compile the code and execute 
    to produce correct answers.
+
+   Some model uses additional library that required to install
+   before compilation. We use arrayfire(http://arrayfire.com/)
+   to speed up computation through GPU computation, use libmf
+   (http://www.csie.ntu.edu.tw/~cjlin/libmf/) to do matrix
+   factorization, we also uses Matlab to do Singular Value 
+   Decomposition, and python to evaluate the performance. The
+   above tools are required to run all our codes.
