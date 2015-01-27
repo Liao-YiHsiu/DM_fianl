@@ -1,9 +1,0 @@
-precision = 30 / 1000 , 0.030000
-recall    = 30 / 7367 , 0.004072
-f-measure = 0.007171
-precision = 49 / 1000 , 0.049000
-recall    = 49 / 9109 , 0.005379
-f-measure = 0.009694
-precision = 25 / 1000 , 0.025000
-recall    = 25 / 5847 , 0.004276
-f-measure = 0.007302

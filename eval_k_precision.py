@@ -55,10 +55,10 @@ if __name__ == '__main__':
         plt_x.append(arange(1, len(predictions)+1))
         plt_y.append(y)
 	precision += k_precision
-	print k_precision
+#print k_precision
 	k_recall = float(idea_correct) / float( len(adopters))
 	recall    += k_recall
-	print k_recall
+#	print k_recall
 	fscore += 2.0 / ((1.0/k_precision) + (1.0/k_recall))
 	''' 
 

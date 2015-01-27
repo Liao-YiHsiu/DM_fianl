@@ -84,9 +84,9 @@ void trainEdge(int target, Real ans, vector< vector<Real> > &grad, vector< vecto
    for(int i = 0, size = edges[target].size(); i < size; ++i)
       out += v[edges[target][i].from] * edges[target][i].weight;
 
-   //out = sigmoid(out);
-   //diff = out * (1 - out) * (out - ans);
-   diff = out-ans;
+   out = sigmoid(out);
+   diff = out * (1 - out) * (out - ans);
+   //diff = out-ans;
    
    for(int i = 0, size = edges[target].size(); i < size; ++i)
       grad[target][i] += diff * v[edges[target][i].from];
@@ -109,6 +109,7 @@ Real train(vector< vector<Edge> > &edges, vector< vector<Idea> > &ideas, vector<
    Real err = 0;
    int errN = 0;
    Real neutral = 0.5;
+   //Real neutral = 0;
    
    // random permutation
    vector<int> perm(ideas.size());
@@ -124,11 +125,13 @@ Real train(vector< vector<Edge> > &edges, vector< vector<Idea> > &ideas, vector<
       }
    }
 
-   v0.resize(edges.size(), neutral); v0[0] = 1;
+//v0.resize(edges.size(), neutral); v0[0] = 1;
+   v0.resize(edges.size(), 0); v0[0] = 1;
 
    for(int i = 0, iSize = ideas.size(); i < iSize; ++i){
 
-      v.clear(); v.resize(edges.size(), neutral); v[0] = 1; // for bias term
+      //v.clear(); v.resize(edges.size(), neutral); v[0] = 1; // for bias term
+      v.clear(); v.resize(edges.size(), 0); v[0] = 1; // for bias term
 
       int now = ideas[perm[i]][0].time;
       //bool first = true;
@@ -145,7 +148,7 @@ Real train(vector< vector<Edge> > &edges, vector< vector<Idea> > &ideas, vector<
                int target = trainset[k];
 
                // for the neutral one
-               trainEdge(target, neutral, grad, edges, v0, err, errN);
+               //trainEdge(target, neutral, grad, edges, v0, err, errN);
 
                // for the turn on one
                trainEdge(target, v[target], grad, edges, v, err, errN);
@@ -154,7 +157,8 @@ Real train(vector< vector<Edge> > &edges, vector< vector<Idea> > &ideas, vector<
             trainset.clear();
          }
 
-         v[ideas[perm[i]][j].node] = ideas[perm[i]][j].degree;
+         //v[ideas[perm[i]][j].node] = ideas[perm[i]][j].degree;
+         v[ideas[perm[i]][j].node] = 1;
          trainset.push_back(ideas[perm[i]][j].node);
       }
 

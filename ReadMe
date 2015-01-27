@@ -1,0 +1,12 @@
+P3 adoption README
+---------------------------------------------------
+Environment:
+   Ubuntu 14.04
+
+How to execute: 
+   Enter each directory and type the following command.
+
+   make; make run; make test
+
+   the above command should compile the code and execute 
+   to produce correct answers.

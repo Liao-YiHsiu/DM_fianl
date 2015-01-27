@@ -17,8 +17,8 @@ debug: all
 $(MODEL):
 	./nn_graph ../graph.txt $(MODEL)
 
-run: $(MODEL) all
-	./nn_train $(MODEL) ../training.txt 1000 1e-3 $(MODEL)
+run: all $(MODEL)
+	./nn_train $(MODEL) ../training.txt 10 1e-3 $(MODEL)
 
 test: all
 	./nn_test $(MODEL) ../test_data/test_data_q1.txt a1.txt
@@ -29,4 +29,4 @@ test: all
 	python ../eval_k_precision.py a3.txt ../test_data/test_data_a3.txt | tee -a result.txt
 
 clean:
-	$(RM) $(TARGET)   # type make clean to remove the compiled file
+	$(RM) $(TARGET) $(MODEL)   # type make clean to remove the compiled file
