@@ -16,6 +16,7 @@ Files:
 ├── eval_k_precision.py
 ├── graph.txt
 ├── ReadMe               : the Readme file
+├── PPT.pdf              : the slides
 ├── Report.pdf           : the report.
 ├── test_data
 │   ├── test_data_a1.txt
